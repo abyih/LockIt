@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
-
-public class HotKeyWindow : NativeWindow
+using Timer = System.Threading.Timer;
+public class Listener : NativeWindow, IDisposable
 {
     [DllImport("user32.dll")]
     private static extern bool RegisterHotKey(IntPtr hWnd, int id, uint fsModifiers, uint vk);
@@ -16,16 +16,19 @@ public class HotKeyWindow : NativeWindow
 
     private const int HOTKEY_ID = 9000; // Unique ID for this hotkey
 
-    public HotKeyWindow()
+    private Timer _intervalTimer;
+    private TimeSpan _checkInterval = TimeSpan.FromMinutes(1);
+
+    public Listener()
     {
-        // Create a hidden window handle to receive messages
         this.CreateHandle(new CreateParams());
-
-        // Register Ctrl + Shift + L (L key code is 0x4C)
-        // You can find Virtual Key codes online (e.g., 0x4C for 'L')
         RegisterKeyCombination(["Ctrl", "Shift", "L"]);
+        _intervalTimer = new Timer(OnTimerTick, null, TimeSpan.Zero, _checkInterval);
     }
-
+    private void OnTimerTick(object? state)
+    {
+        //Lock
+    }
     private uint GetKeyCode(string Key)
     {
         return Key switch
@@ -70,19 +73,13 @@ public class HotKeyWindow : NativeWindow
 
     private void OnHotKeyPressed()
     {
-        // 1. Update status so UI knows it was triggered
-        var settings = Windows.Storage.ApplicationData.Current.LocalSettings;
-        settings.Values["LastActivation"] = DateTime.Now.ToString();
-
-        // 2. Launch the UI App
-        // Using the Protocol link is the cleanest way to bring a WinUI app to front
-        var uri = new Uri("lockit-app://activate");
-        _ = Windows.System.Launcher.LaunchUriAsync(uri);
+        _intervalTimer.Change(TimeSpan.Zero, _checkInterval);
     }
 
     public void Dispose()
     {
         UnregisterHotKey(this.Handle, HOTKEY_ID);
         this.DestroyHandle();
+        _intervalTimer?.Dispose();
     }
 }

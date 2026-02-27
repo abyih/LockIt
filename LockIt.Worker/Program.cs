@@ -1,23 +1,18 @@
-﻿using Windows.Storage;
-
-namespace LockIt.Worker
+﻿namespace LockIt.Worker
 {
     internal class Program
     {
+        static Mutex mutex = new Mutex(true, "LockItWorker");
+
         [STAThread]
         static void Main(string[] args)
         {
-            var LocalSettings = ApplicationData.Current.LocalSettings;
-            bool IsActive = (bool)LocalSettings.Values["IsActive"] == true;
+            if (!mutex.WaitOne(TimeSpan.Zero, true))
+                return;
 
-            if (IsActive)
+            using (Listener listener = new Listener())
             {
-                while (true)
-                {
-                    int Interval = (int)LocalSettings.Values["Interval"];
-
-                    await Task.Delay(Interval);
-                }
+                Application.Run();
             }
         }
 
