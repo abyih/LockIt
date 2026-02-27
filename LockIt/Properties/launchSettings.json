@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "LockIt (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "LockIt (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}

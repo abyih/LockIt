@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ContentDialog
+    x:Class="LockIt.Controls.KeyCombinationConfigBox"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:LockIt.Controls"
+    PrimaryButtonText="Save"
+    CloseButtonText="Cancel"
+    DefaultButton="Primary"
+    Style="{StaticResource DefaultContentDialogStyle}"
+    >
+    <StackPanel x:Name="panelDialog" Spacing="5">
+        <TextBlock x:Name="txtInfo" FontSize="9" FontWeight="Bold" Text="Click the Record button to start recording the key combination"/>
+        <local:KeyCombinationBox Items="{x:Bind Items}" />
+        <StackPanel Spacing="5" Orientation="Horizontal" HorizontalAlignment="Center">
+            <Button x:Name="btnRecord" Style="{StaticResource AccentButtonStyle}" Click="btnRecord_Click">
+                <FontIcon Glyph="&#xE7C8;" />
+            </Button>
+            <Button x:Name="btnReset" Click="btnReset_Click">
+                <FontIcon Glyph="&#xE777;" />
+            </Button>
+        </StackPanel>
+    </StackPanel>
+</ContentDialog>
